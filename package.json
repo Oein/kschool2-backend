@@ -22,7 +22,8 @@
   },
   "scripts": {
     "dev": "nodemon --watch src --ext ts,mts,cts --exec \"tsc; node dist/index.js\"",
-    "build": "prisma generate; tsc",
+    "prebuild": "prisma generate",
+    "build": "tsc",
     "start": "node dist/index.js"
   }
 }
