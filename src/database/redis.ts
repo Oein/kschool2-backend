@@ -74,6 +74,10 @@ const queue_school = (schoolCode: string, pop: number) => {
   }
 };
 
+export function addTotalScore(score: number) {
+  totalScore += score;
+}
+
 export default {
   redisClient: redisClient,
   prisma: prisma,
@@ -116,7 +120,7 @@ export default {
           (err, data) => {
             if (err) console.error(`Redis update error\n>>> ${err}`);
             if (data) {
-              totalScore += parseInt(data);
+              addTotalScore(score);
             }
 
             resolve(err ? -1 : data);

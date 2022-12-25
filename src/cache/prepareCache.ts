@@ -1,4 +1,4 @@
-import redis from "../database/redis";
+import redis, { addTotalScore } from "../database/redis";
 
 // DB 에 있는 데이터들 Redis 에 올리기
 export default async function prepareCahce() {
@@ -7,6 +7,6 @@ export default async function prepareCahce() {
 
   data.forEach((e) => {
     redis.pop.set(e.schoolCode, parseInt(e.pops.toString()));
-    redis.totalScore += Number(e.pops);
+    addTotalScore(Number(e.pops));
   });
 }
