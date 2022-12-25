@@ -148,6 +148,24 @@ export default {
     },
   },
   token: {
+    signup: (ip: string) => {
+      return new Promise<{
+        token: string;
+      }>(async (resolve, reject) => {
+        let newToken = signNewToken();
+
+        await redisClient.set(`tokens::${newToken}`, ip);
+        await redisClient.set(`tokens::time::${ip}`, new Date().getTime());
+
+        setTimeout(() => {
+          redisClient.del(`tokens::time::${ip}`);
+        }, 1000 * 60 * 30);
+
+        resolve({
+          token: newToken,
+        });
+      });
+    },
     register: (oldToken: string, ip: string) => {
       return new Promise<{
         error: string | null;
@@ -167,6 +185,13 @@ export default {
             // 같은 토큰인데 접속한 ip가 다름
             resolve({
               error: "Requested from different ip.",
+              token: null,
+            });
+            return;
+          }
+          if (!(await redisClient.exists(`tokens::time::${ip}`))) {
+            resolve({
+              error: "hCaptcha token expired. Do it again.",
               token: null,
             });
             return;
