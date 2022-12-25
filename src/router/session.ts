@@ -5,7 +5,7 @@ import verify_hCaptcha from "../util/hCaptchaVerify";
 const sessionRouter: Router = express.Router();
 
 sessionRouter.get("/", async (req: Request, res: Response) => {
-  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Origin", process.env.ORIGIN);
 
   let { token } = req.query;
 
