@@ -7,7 +7,7 @@ const totalRouter: Router = express.Router();
 totalRouter.get("/", async (req: Request, res: Response) => {
   res.header("Access-Control-Allow-Origin", process.env.ORIGIN);
 
-  res.send({ total: redis.totalScore });
+  res.send({ total: await redis.total.get() });
 });
 
 export default totalRouter;
