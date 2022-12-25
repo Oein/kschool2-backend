@@ -21,6 +21,8 @@
     "prisma": "4.8.0"
   },
   "scripts": {
-    "dev": "nodemon --watch src --ext ts,mts,cts --exec \"tsc; node dist/index.js\""
+    "dev": "nodemon --watch src --ext ts,mts,cts --exec \"tsc; node dist/index.js\"",
+    "build": "prisma generate; tsc",
+    "start": "node dist/index.js"
   }
 }
