@@ -23,8 +23,6 @@ redisClient.on("connect", () => {
   console.log("[REDIS]  ", "Connected!");
 });
 
-let totalScore: number = 0;
-
 let json_queue: {
   [key: string]: number;
 } = {};
@@ -74,14 +72,9 @@ const queue_school = (schoolCode: string, pop: number) => {
   }
 };
 
-export function addTotalScore(score: number) {
-  totalScore += score;
-}
-
 export default {
   redisClient: redisClient,
   prisma: prisma,
-  totalScore: totalScore,
   empty: () => {},
   ip: {
     // ip에 1 더하기
@@ -120,7 +113,7 @@ export default {
           (err, data) => {
             if (err) console.error(`Redis update error\n>>> ${err}`);
             if (data) {
-              addTotalScore(score);
+              redisClient.incrby("TOTAL", score);
             }
 
             resolve(err ? -1 : data);
@@ -214,6 +207,14 @@ export default {
           return;
         });
       });
+    },
+  },
+  total: {
+    add: async (n: number) => {
+      await redisClient.incrby("TOTAL", n);
+    },
+    get: async () => {
+      return await redisClient.get(`TOTAL`);
     },
   },
 };

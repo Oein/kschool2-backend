@@ -12,7 +12,7 @@ popRouter.post("/", async (req: Request, res: Response) => {
   redis.pop.update(schoolCode, pop);
 
   const ret = {
-    total: redis.totalScore,
+    total: await redis.total.get(),
     rank: await redis.pop.getRank(schoolCode),
     schoolPop: await redis.pop.getScore(schoolCode),
     token: req.newToken,
