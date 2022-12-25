@@ -12,6 +12,7 @@ import popRouter from "./router/pop";
 
 import prepareCahce from "./cache/prepareCache";
 import { checkPopQuery } from "./middleware/checkPopQuery";
+import sessionRouter from "./router/session";
 
 prepareCahce().then(() => {
   console.log("[Cache]", "Updated Redis data");
@@ -24,6 +25,7 @@ let app = express();
 const PORT = parseInt(process.env.PORT || "8080");
 
 app.use("/pop", rateLimiter, checkPopQuery, popRouter);
+app.use("/register", sessionRouter);
 
 app.listen(PORT, () => {
   console.log("[Express]", "Listening on port", PORT);
