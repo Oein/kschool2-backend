@@ -31,6 +31,15 @@ app.use("/register", sessionRouter);
 app.use("/total", totalRouter);
 app.use("/first", firstRouter);
 
+app.get("/banme", (req, res) => {
+  const ip = `IP_${
+    req.headers["x-forwarded-for"] || req.connection.remoteAddress
+  }`;
+
+  redis.ban.add(ip);
+  res.send("Banned! 1 Day");
+});
+
 app.listen(PORT, () => {
   console.log("[Express]", "Listening on port", PORT);
 });

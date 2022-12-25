@@ -217,4 +217,15 @@ export default {
       return await redisClient.get(`TOTAL`);
     },
   },
+  ban: {
+    add: async (ip: string) => {
+      await redisClient.set(`BAN::${ip}`, 1);
+      setTimeout(() => {
+        redisClient.del(`BAN::${ip}`);
+      }, 1000 * 60 * 60 * 24);
+    },
+    ed: async (ip: string) => {
+      return (await redisClient.exists(`BAN::${ip}`)) > 0;
+    },
+  },
 };

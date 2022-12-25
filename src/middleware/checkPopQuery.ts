@@ -15,6 +15,12 @@ export const checkPopQuery = async (
     req.headers["x-forwarded-for"] || req.connection.remoteAddress
   }`;
 
+  let banned = await redis.ban.ed(ip);
+  if (banned)
+    return res.status(405).send({
+      error: "Banned for 1Day!",
+    });
+
   const invalid_q = () => {
     res.status(400).send({
       error: "query is invalid",
