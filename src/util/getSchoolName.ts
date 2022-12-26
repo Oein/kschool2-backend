@@ -8,7 +8,7 @@ export var getSchoolName = async (schoolCode: string) => {
   );
   var { data } = await axios.get(URL);
   if (data.schoolInfo) {
-    var { SD_SCHUL_CODE: schoolCode, SCHUL_NM: schoolName } =
+    var { SD_SCHUL_CODE: schoolCode_, SCHUL_NM: schoolName } =
       data.schoolInfo[1].row[0];
 
     return schoolName;
