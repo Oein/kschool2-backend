@@ -28,7 +28,7 @@ sessionRouter.get("/", async (req: Request, res: Response) => {
 
   const ip = `IP_${
     req.headers["x-forwarded-for"] || req.connection.remoteAddress
-  }`;
+  }...${req.headers["user-agent"]}`;
 
   let g = await redis.token.signup(ip);
 

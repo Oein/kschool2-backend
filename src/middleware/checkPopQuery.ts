@@ -11,11 +11,14 @@ export const checkPopQuery = async (
   next: NextFunction
 ) => {
   const { schoolCode, count, token } = req.query;
-  const ip = `IP_${
+  const ip_ls = `IP_${
     req.headers["x-forwarded-for"] || req.connection.remoteAddress
   }`;
+  const ip = `IP_${
+    req.headers["x-forwarded-for"] || req.connection.remoteAddress
+  }...${req.headers["user-agent"]}`;
 
-  let banned = await redis.ban.ed(ip);
+  let banned = await redis.ban.ed(ip_ls);
   if (banned)
     return res.status(405).send({
       error: "Banned for 1Day!",
