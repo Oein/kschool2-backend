@@ -9,20 +9,18 @@ firstRouter.post("/", async (req: Request, res: Response) => {
   let schoolCode = req.query.schoolCode || "";
 
   if (typeof schoolCode !== "string")
-    return res.send({
+    return res.status(400).send({
       error: "School Code is not a string",
     });
 
   const S = await validateSchool(schoolCode);
   if (!S) return res.status(400).json({ error: "schoolCode is not exists" });
 
-  const ret = {
-    total: await redis.total.get(),
-    rank: await redis.pop.getRank(schoolCode),
-    schoolPop: await redis.pop.getScore(schoolCode),
-  };
+  const ret = `${await redis.total.get()}/${await redis.pop.getRank(
+    schoolCode
+  )}/${await redis.pop.getScore(schoolCode)}`;
 
-  return res.status(200).json(ret);
+  return res.send(ret);
 });
 
 export default firstRouter;
