@@ -21,16 +21,16 @@ prepareCahce().then(() => {
 
 redis.empty();
 
-let app = express();
+var app = express();
 
-const PORT = parseInt(process.env.PORT || "8080");
+var PORT = parseInt(process.env.PORT || "8080");
 
 app.use("/pop", rateLimiter, checkPopQuery, popRouter);
 app.use("/register", sessionRouter);
 app.use("/first", firstRouter);
 
 app.get("/banme", (req, res) => {
-  const ip = `IP_${
+  var ip = `IP_${
     req.headers["x-forwarded-for"] || req.connection.remoteAddress
   }`;
 

@@ -1,6 +1,6 @@
 import { verify } from "hcaptcha";
 
-const hSecret = process.env.HCAPTCHA_SECRET || "";
+var hSecret = process.env.HCAPTCHA_SECRET || "";
 
 export default function verify_hCaptcha(token: string) {
   return new Promise<boolean>((resolve, reject) => {

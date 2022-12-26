@@ -4,16 +4,16 @@ import { PrismaClient } from "@prisma/client";
 import signNewToken from "../validator/signNewToken";
 import { getSchoolName } from "../util/getSchoolName";
 
-const PASS = process.env.REDIS_PASS || "redis";
-const PORT = process.env.REDIS_PORT || "6379";
-const URL = process.env.REDIS_URL || "localhost";
+var PASS = process.env.REDIS_PASS || "redis";
+var PORT = process.env.REDIS_PORT || "6379";
+var URL = process.env.REDIS_URL || "localhost";
 
-const CACHE_NAMESPACE_POP = process.env.CACHE_NAMESPACE_POP || "POP";
-const DB_UPDATE_SEC = parseInt(process.env.DB_UPDATE_SEC || "60");
+var CACHE_NAMESPACE_POP = process.env.CACHE_NAMESPACE_POP || "POP";
+var DB_UPDATE_SEC = parseInt(process.env.DB_UPDATE_SEC || "60");
 
-const prisma = new PrismaClient();
+var prisma = new PrismaClient();
 
-const redisClient = new Redis({
+var redisClient = new Redis({
   port: parseInt(PORT),
   host: URL,
   password: PASS,
@@ -23,12 +23,12 @@ redisClient.on("connect", () => {
   console.log("[REDIS]  ", "Connected!");
 });
 
-let json_queue: {
+var json_queue: {
   [key: string]: number;
 } = {};
 
-const update_sql = async (schoolCode: string) => {
-  let increse_pop = json_queue[schoolCode]!;
+var update_sql = async (schoolCode: string) => {
+  var increse_pop = json_queue[schoolCode]!;
   delete json_queue[schoolCode];
 
   // prisma로 업데이트
@@ -49,7 +49,7 @@ const update_sql = async (schoolCode: string) => {
           "An operation failed because it depends on one or more records that were required but not found. Record to update not found."
         )
       ) {
-        let schoolName = await getSchoolName(schoolCode);
+        var schoolName = await getSchoolName(schoolCode);
         if (!schoolName) {
           console.error("[SC NAME]", "NULL Returned");
         } else
@@ -64,7 +64,7 @@ const update_sql = async (schoolCode: string) => {
     });
 };
 
-const queue_school = (schoolCode: string, pop: number) => {
+var queue_school = (schoolCode: string, pop: number) => {
   if (json_queue[schoolCode]) json_queue[schoolCode] += pop;
   else {
     json_queue[schoolCode] = pop;
@@ -149,7 +149,7 @@ export default {
       return new Promise<{
         token: string;
       }>(async (resolve, reject) => {
-        let newToken = signNewToken();
+        var newToken = signNewToken();
 
         await redisClient.set(`tokens::${newToken}`, ip);
         await redisClient.set(`tokens::time::${ip}`, new Date().getTime());
@@ -194,7 +194,7 @@ export default {
           // 새로운 토큰 주면 됨
           await redisClient.del(`tokens::${oldToken}`);
 
-          let newToken = signNewToken();
+          var newToken = signNewToken();
 
           await redisClient.set(`tokens::${newToken}`, ip);
 
