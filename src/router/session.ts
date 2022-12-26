@@ -32,9 +32,7 @@ sessionRouter.get("/", async (req: Request, res: Response) => {
 
   let g = await redis.token.signup(ip);
 
-  return res.send({
-    token: g.token,
-  });
+  return res.send(g.token);
 });
 
 export default sessionRouter;
