@@ -13,7 +13,6 @@ import popRouter from "./router/pop";
 import prepareCahce from "./cache/prepareCache";
 import { checkPopQuery } from "./middleware/checkPopQuery";
 import sessionRouter from "./router/session";
-import totalRouter from "./router/total";
 import firstRouter from "./router/first";
 
 prepareCahce().then(() => {
@@ -28,7 +27,6 @@ const PORT = parseInt(process.env.PORT || "8080");
 
 app.use("/pop", rateLimiter, checkPopQuery, popRouter);
 app.use("/register", sessionRouter);
-app.use("/total", totalRouter);
 app.use("/first", firstRouter);
 
 app.get("/banme", (req, res) => {
