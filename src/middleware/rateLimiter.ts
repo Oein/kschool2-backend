@@ -14,7 +14,7 @@ export default async function rateLimiter(
   }`;
   const requests = await redis.ip.incr(ip);
   if (!requests) {
-    return res.status(500).json({ error: true, msg: "server error" });
+    return res.status(500).json({ error: "server error" });
   }
 
   if (requests === 1) redis.ip.expire(ip, POP_SECONDS_WINDOW);
@@ -22,5 +22,5 @@ export default async function rateLimiter(
     return next();
   }
 
-  return res.status(429).json({ error: true, msg: "429 Too many requests" });
+  return res.status(429).json({ error: "429 Too many requests" });
 }

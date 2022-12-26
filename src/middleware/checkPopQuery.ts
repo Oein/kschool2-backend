@@ -39,17 +39,14 @@ export const checkPopQuery = async (
   let rested = await redis.token.register(token, ip);
   // 에러 나면 끝내기
   if (rested.error) {
-    return res.status(400).json({ error: true, msg: rested.error });
+    return res.status(400).json({ error: rested.error });
   }
   // 토큰 넣기
   if (rested.token) req.newToken = rested.token;
 
   // 학교 코드 검증
   const S = await validateSchool(schoolCode);
-  if (!S)
-    return res
-      .status(400)
-      .json({ error: true, msg: "schoolCode is not exists" });
+  if (!S) return res.status(400).json({ error: "schoolCode is not exists" });
 
   // 점수 계산
   const c = parseInt(count || "0");

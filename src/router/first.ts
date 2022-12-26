@@ -14,10 +14,7 @@ firstRouter.post("/", async (req: Request, res: Response) => {
     });
 
   const S = await validateSchool(schoolCode);
-  if (!S)
-    return res
-      .status(400)
-      .json({ error: true, msg: "schoolCode is not exists" });
+  if (!S) return res.status(400).json({ error: "schoolCode is not exists" });
 
   const ret = {
     total: await redis.total.get(),
