@@ -12,12 +12,13 @@ popRouter.post("/", async (req: Request, res: Response) => {
   // 추가는 thread로
   redis.pop.update(schoolCode, pop);
 
-  const total = await redis.total.get();
-  const rank = await redis.pop.getRank(schoolCode);
-  const schoolPop = await redis.pop.getScore(schoolCode);
-  const token = req.newToken;
-  const ret = `${total}/${rank}/${schoolPop}/${token}`;
-  return res.status(200).send(ret);
+  return res
+    .status(200)
+    .send(
+      `${await redis.total.get()}/${await redis.pop.getRank(
+        schoolCode
+      )}/${await redis.pop.getScore(schoolCode)}/${req.newToken}`
+    );
 });
 
 export default popRouter;

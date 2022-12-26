@@ -19,17 +19,9 @@ export const checkPopQuery = async (
   }...${req.headers["user-agent"]}`;
 
   let banned = await redis.ban.ed(ip_ls);
-  if (banned)
-    return res.status(405).send({
-      error: "Banned for 1Day!",
-    });
+  if (banned) return res.send("-1");
 
-  const invalid_q = () => {
-    res.status(400).send({
-      error: "query is invalid",
-    });
-    return;
-  };
+  const invalid_q = () => res.status(400).send("-2");
 
   if (typeof count !== "string") return invalid_q();
   if (typeof schoolCode !== "string") return invalid_q();
@@ -46,7 +38,7 @@ export const checkPopQuery = async (
 
   // 학교 코드 검증
   const S = await validateSchool(schoolCode);
-  if (!S) return res.status(400).json({ error: "schoolCode is not exists" });
+  if (!S) return res.status(400).send("-2");
 
   // 점수 계산
   const c = parseInt(count || "0");
