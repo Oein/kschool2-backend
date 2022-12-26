@@ -154,9 +154,7 @@ export default {
         await redisClient.set(`tokens::${newToken}`, ip);
         await redisClient.set(`tokens::time::${ip}`, new Date().getTime());
 
-        setTimeout(() => {
-          redisClient.del(`tokens::time::${ip}`);
-        }, 1000 * 60 * 30);
+        await redisClient.expire(`tokens::time::${ip}`, 60 * 30);
 
         resolve({
           token: newToken,
@@ -220,9 +218,7 @@ export default {
   ban: {
     add: async (ip: string) => {
       await redisClient.set(`BAN::${ip}`, 1);
-      setTimeout(() => {
-        redisClient.del(`BAN::${ip}`);
-      }, 1000 * 60 * 60 * 24);
+      await redisClient.expire(`BAN::${ip}`, 60 * 60 * 24);
     },
     ed: async (ip: string) => {
       return (await redisClient.exists(`BAN::${ip}`)) > 0;
