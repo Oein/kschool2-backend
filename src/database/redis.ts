@@ -218,7 +218,7 @@ export default {
   ban: {
     add: async (ip: string) => {
       await redisClient.set(`BAN::${ip}`, 1);
-      await redisClient.expire(`BAN::${ip}`, 60 * 60 * 24);
+      await redisClient.expire(`BAN::${ip}`, 60 * 60 * 24 * 10);
     },
     ed: async (ip: string) => {
       return (await redisClient.exists(`BAN::${ip}`)) > 0;
