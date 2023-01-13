@@ -15,3 +15,9 @@ model School {
   schoolCode String @id
   schoolName String
 }
+
+model BannedUser {
+  ip String @id
+  banStart DateTime?
+  bannedCount Int @default(0)
+}
