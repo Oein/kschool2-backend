@@ -12,6 +12,9 @@ export default async function rateLimiter(
   var ip = `IP_${
     req.headers["x-forwarded-for"] || req.connection.remoteAddress
   }`;
+
+  console.log("[RateLimiter]", ip);
+
   var requests = await redis.ip.incr(ip);
   if (!requests) {
     return res.status(400).send("-4");
