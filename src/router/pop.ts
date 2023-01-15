@@ -4,8 +4,6 @@ import redis from "../database/redis";
 var popRouter: Router = express.Router();
 
 popRouter.post("/", async (req: Request, res: Response) => {
-  res.header("Access-Control-Allow-Origin", process.env.ORIGIN);
-
   var pop = req.count || 0;
   var schoolCode = req.schoolCode || "";
 

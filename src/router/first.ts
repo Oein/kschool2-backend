@@ -5,7 +5,6 @@ import validateSchool from "../validator/validateSchool";
 var firstRouter: Router = express.Router();
 
 firstRouter.get("/", async (req: Request, res: Response) => {
-  res.header("Access-Control-Allow-Origin", process.env.ORIGIN);
   var schoolCode = req.query.schoolCode || "";
 
   if (typeof schoolCode !== "string") return res.status(400).send("-2");
