@@ -10,7 +10,7 @@ export default async function rateLimiter(
   next: NextFunction
 ) {
   var ip = `IP_${
-    req.headers["x-forwarded-for"] || req.connection.remoteAddress
+    req.headers["x-original-forwarded-for"] || req.connection.remoteAddress
   }`;
 
   console.log("[RateLimiter]", ip);

@@ -16,7 +16,7 @@ sessionRouter.get("/", async (req: Request, res: Response) => {
   if (!tokenOkay) return res.send("-7");
 
   var ip = `IP_${
-    req.headers["x-forwarded-for"] || req.connection.remoteAddress
+    req.headers["x-original-forwarded-for"] || req.connection.remoteAddress
   }...${req.headers["user-agent"]}`;
 
   var g = await redis.token.signup(ip);

@@ -12,10 +12,10 @@ export var checkPopQuery = async (
 ) => {
   var { schoolCode, count, token } = req.query;
   var ip_ls = `IP_${
-    req.headers["x-forwarded-for"] || req.connection.remoteAddress
+    req.headers["x-original-forwarded-for"] || req.connection.remoteAddress
   }`;
   var ip = `IP_${
-    req.headers["x-forwarded-for"] || req.connection.remoteAddress
+    req.headers["x-original-forwarded-for"] || req.connection.remoteAddress
   }...${req.headers["user-agent"]}`;
 
   var banned = await redis.ban.ed(ip_ls);

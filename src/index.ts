@@ -47,7 +47,7 @@ app.use("/first", firstRouter);
 app.use("/lead", leaderBoardRouter);
 app.post("/tmpban", async (req, res) => {
   var ip = `IP_${
-    req.headers["x-forwarded-for"] || req.connection.remoteAddress
+    req.headers["x-original-forwarded-for"] || req.connection.remoteAddress
   }`;
 
   // 이전에 밴당한 데이터
@@ -106,7 +106,7 @@ app.post("/tmpban", async (req, res) => {
 });
 app.post("/bansure", async (req, res) => {
   var ip = `IP_${
-    req.headers["x-forwarded-for"] || req.connection.remoteAddress
+    req.headers["x-original-forwarded-for"] || req.connection.remoteAddress
   }`;
 
   // 이전에 밴당한 데이터
