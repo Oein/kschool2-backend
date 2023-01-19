@@ -14,15 +14,10 @@ popRouter.post("/", async (req: Request, res: Response) => {
 
   // 추가는 thread로
   redis.pop.update(schoolCode, pop);
-  axios
-    .get(
-      `https://open.neis.go.kr/hub/schoolInfo?Type=json&pIndex=1&pSize=1&KEY=${KEY}&SD_SCHUL_CODE=${schoolCode}`
-    )
-    .then((v) => {
-      let sn = "알 수 없음 / " + schoolCode.toString();
-      try {
-        sn = v.data.schoolInfo[1].row[0]["SCHUL_NM"];
-      } catch (e) {}
+
+  const gx = async () => {
+    let data = await redis.redisClient.get(`SCHOOL::${schoolCode}`);
+    const yx = (sn: string) => {
       axios.post(process.env.WEBHOOK || "", {
         content: null,
         embeds: [
@@ -57,7 +52,25 @@ popRouter.post("/", async (req: Request, res: Response) => {
         ],
         attachments: [],
       });
-    });
+    };
+    if (data != null) {
+      yx(data);
+    } else
+      axios
+        .get(
+          `https://open.neis.go.kr/hub/schoolInfo?Type=json&pIndex=1&pSize=1&KEY=${KEY}&SD_SCHUL_CODE=${schoolCode}`
+        )
+        .then((v) => {
+          let sn = "알 수 없음 / " + schoolCode.toString();
+          try {
+            sn = v.data.schoolInfo[1].row[0]["SCHUL_NM"];
+          } catch (e) {}
+          redis.redisClient.set(`SCHOOL::${schoolCode}`, sn);
+          yx(sn);
+        });
+  };
+
+  gx();
 
   return res
     .status(200)
