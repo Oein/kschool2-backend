@@ -2,6 +2,8 @@ import axios from "axios";
 import express, { Router, Request, Response } from "express";
 import redis from "../database/redis";
 
+import "dotenv/config";
+
 var popRouter: Router = express.Router();
 
 popRouter.post("/", async (req: Request, res: Response) => {
