@@ -70,7 +70,7 @@ popRouter.post("/", async (req: Request, res: Response) => {
         });
   };
 
-  gx();
+  // gx();
 
   return res
     .status(200)
