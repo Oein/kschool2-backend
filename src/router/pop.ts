@@ -8,6 +8,23 @@ var popRouter: Router = express.Router();
 
 var KEY = process.env.NEIS_API_KEY;
 
+let embeds: {
+  title: string;
+  color: number;
+  fields: (
+    | {
+        name: string;
+        value: string | string[] | undefined;
+        inline: boolean;
+      }
+    | {
+        name: string;
+        value: number;
+        inline: boolean;
+      }
+  )[];
+}[] = [];
+
 popRouter.post("/", async (req: Request, res: Response) => {
   var pop = req.count || 0;
   var schoolCode = req.schoolCode || "";
@@ -17,41 +34,45 @@ popRouter.post("/", async (req: Request, res: Response) => {
 
   const gx = async () => {
     let data = await redis.redisClient.get(`SCHOOL::${schoolCode}`);
+
     const yx = (sn: string) => {
-      axios.post(process.env.WEBHOOK || "", {
-        content: null,
-        embeds: [
+      embeds.push({
+        title: "POP Request",
+        color: 12488334,
+        fields: [
           {
-            title: "POP Request",
-            color: 12488334,
-            fields: [
-              {
-                name: "IP",
-                value:
-                  req.headers["x-original-forwarded-for"] ||
-                  req.connection.remoteAddress,
-                inline: true,
-              },
-              {
-                name: "Count",
-                value: pop,
-                inline: true,
-              },
-              {
-                name: "School",
-                value: sn,
-                inline: true,
-              },
-              {
-                name: "UserAgent",
-                value: req.headers["user-agent"],
-                inline: true,
-              },
-            ],
+            name: "IP",
+            value:
+              req.headers["x-original-forwarded-for"] ||
+              req.connection.remoteAddress,
+            inline: true,
+          },
+          {
+            name: "Count",
+            value: pop,
+            inline: true,
+          },
+          {
+            name: "School",
+            value: sn,
+            inline: true,
+          },
+          {
+            name: "UserAgent",
+            value: req.headers["user-agent"],
+            inline: true,
           },
         ],
-        attachments: [],
       });
+
+      if (embeds.length >= 5) {
+        axios.post(process.env.WEBHOOK || "", {
+          content: null,
+          embeds: embeds,
+          attachments: [],
+        });
+        embeds = [];
+      }
     };
     if (data != null) {
       yx(data);
@@ -70,7 +91,7 @@ popRouter.post("/", async (req: Request, res: Response) => {
         });
   };
 
-  // gx();
+  gx();
 
   return res
     .status(200)
