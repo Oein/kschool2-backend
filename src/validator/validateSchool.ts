@@ -1,7 +1,6 @@
 var KEY = process.env.NEIS_API_KEY || "";
 
 import redis from "../database/redis";
-import axios from "axios";
 import { getSchoolName } from "../util/getSchoolName";
 
 var checkSchoolCode = (c: string) => {

@@ -29,6 +29,8 @@ popRouter.post("/", async (req: Request, res: Response) => {
   var pop = req.count || 0;
   var schoolCode = req.schoolCode || "";
 
+  console.log(pop, schoolCode);
+
   // 추가는 thread로
   redis.pop.update(schoolCode, pop);
 
@@ -91,14 +93,14 @@ popRouter.post("/", async (req: Request, res: Response) => {
         });
   };
 
-  gx();
+  // gx();
 
   return res
     .status(200)
     .send(
       `${await redis.total.get()}/${await redis.pop.getRank(
         schoolCode
-      )}/${await redis.pop.getScore(schoolCode)}/${req.newToken}`
+      )}/${await redis.pop.getScore(schoolCode)}`
     );
 });
 

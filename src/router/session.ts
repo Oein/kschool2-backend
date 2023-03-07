@@ -19,7 +19,7 @@ sessionRouter.get("/", async (req: Request, res: Response) => {
     req.headers["x-original-forwarded-for"] || req.connection.remoteAddress
   }...${req.headers["user-agent"]}`;
 
-  var g = await redis.token.signup(ip);
+  var g = await redis.token.signup(ip, req.headers["user-agent"]!);
 
   return res.send(g.token);
 });

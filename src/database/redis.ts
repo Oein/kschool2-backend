@@ -1,3 +1,4 @@
+import { aesGcmEncrypt, enc } from "./../validator/validateOldTokenAndNewToken";
 import Redis from "ioredis";
 
 import { PrismaClient } from "@prisma/client";
@@ -79,7 +80,7 @@ export default {
   ip: {
     // ip에 1 더하기
     incr: async (ip: string) => {
-      return await new Promise((resolve) => {
+      return await new Promise<number | null>((resolve) => {
         redisClient.incr(ip, (err, data) => {
           if (err) console.error("[REDIS]  ", "Redis ip incr error", err);
           resolve(err ? null : data || 0);
@@ -145,11 +146,19 @@ export default {
     },
   },
   token: {
-    signup: (ip: string) => {
+    signup: (ip: string, agent: string) => {
       return new Promise<{
         token: string;
       }>(async (resolve, reject) => {
-        var newToken = signNewToken();
+        var newToken = await aesGcmEncrypt(
+          "KSCHOOL" +
+            JSON.stringify({
+              a: agent, // agent
+              k: signNewToken(), // key
+              t: new Date().getTime() + new Date().getTimezoneOffset() * 60000, // timestamp
+            }),
+          enc
+        );
 
         await redisClient.set(`tokens::${newToken}`, ip);
         await redisClient.set(`tokens::time::${ip}`, new Date().getTime());
@@ -161,17 +170,15 @@ export default {
         });
       });
     },
-    register: (oldToken: string, ip: string) => {
+    register: (oldToken: string, ip: string, newToken: string) => {
       return new Promise<{
         error: string | null;
-        token: string | null;
       }>(async (resolve, reject) => {
         redisClient.get(`tokens::${oldToken}`).then(async (v) => {
           if (!v) {
             // token이 없으면
             resolve({
               error: "Token does not exist.",
-              token: null,
             });
 
             return;
@@ -180,27 +187,21 @@ export default {
             // 같은 토큰인데 접속한 ip가 다름
             resolve({
               error: "Requested from different ip.",
-              token: null,
             });
             return;
           }
           if (!(await redisClient.exists(`tokens::time::${ip}`))) {
             resolve({
               error: "hCaptcha token expired. Do it again.",
-              token: null,
             });
             return;
           }
           // 새로운 토큰 주면 됨
           await redisClient.del(`tokens::${oldToken}`);
-
-          var newToken = signNewToken();
-
           await redisClient.set(`tokens::${newToken}`, ip);
 
           resolve({
             error: null,
-            token: newToken,
           });
           return;
         });

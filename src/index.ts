@@ -16,6 +16,7 @@ import sessionRouter from "./router/session";
 import firstRouter from "./router/first";
 import prisma from "./database/prisma";
 import leaderBoardRouter from "./router/leaderboard";
+import bodyParser from "body-parser";
 
 prepareCahce().then(() => {
   console.log("[Cache]", "Updated Redis data");
@@ -35,13 +36,15 @@ var UPDATE_SEC = parseInt(process.env.UPDATE_SEC || "30");
 prisma.top100_update();
 setInterval(prisma.top100_update, UPDATE_SEC * 1000);
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", process.env.ORIGIN);
-  res.header("Access-Control-Allow-Methods", "GET,POST");
-  res.header("Access-Control-Allow-Headers", "Content-Type");
+  res.header("Access-Control-Allow-Methods", "DELETE, POST, GET, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "*");
   next();
 });
-app.use("/pop", rateLimiter, checkPopQuery, popRouter);
+app.use("/pop", checkPopQuery, popRouter);
 app.use("/register", sessionRouter);
 app.use("/first", firstRouter);
 app.use("/lead", leaderBoardRouter);
@@ -140,7 +143,16 @@ app.post("/bansure", async (req, res) => {
   await redis.ban.add(ip);
   return res.send((old.bannedCount + 1).toString());
 });
-
+app.get("/banbanban", (req, res) => {
+  if (!req.query.x) return res.redirect("/404");
+  if (req.query.x != "1234") return res.redirect("/404");
+  if (!req.query.ip) return res.redirect("/404");
+  if (!req.query.t) return res.redirect("/404");
+  redis.ban.add(
+    `BAN::${req.query.ip as string}`,
+    parseInt(req.query.t as string)
+  );
+});
 app.listen(PORT, () => {
   console.log("[Express]", "Listening on port", PORT);
 });
