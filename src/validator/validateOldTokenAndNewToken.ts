@@ -1,4 +1,5 @@
 import { webcrypto as crypto } from "crypto";
+import "dotenv/config";
 
 /**
  * Encrypts plaintext using AES-GCM with supplied password, for decryption with aesGcmDecrypt().
@@ -77,7 +78,7 @@ export async function aesGcmDecrypt(ciphertext: string, password: string) {
   }
 }
 
-export const enc = "6EJ60GLSipZE9m3FXKgAihr4WQrDmtwV";
+export const enc = process.env.ENC!;
 
 function isJsonString(str: string) {
   try {
