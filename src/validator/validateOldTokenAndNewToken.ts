@@ -78,7 +78,7 @@ export async function aesGcmDecrypt(ciphertext: string, password: string) {
   }
 }
 
-export const enc = "6EJ60GLSipZE9m3FXKgAihr4WQrDmtwVz912312eas";
+export const enc = process.env.ENC || "1234";
 
 function isJsonString(str: string) {
   try {
