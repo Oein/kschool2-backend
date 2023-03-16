@@ -60,8 +60,11 @@ export var checkPopQuery = async (
     token = atob(token);
     newToken = atob(newToken);
 
-    if (!(await validate(token, newToken, req.headers["user-agent"] || "")))
-      return res.status(400).json({ error: "Not valid ontoken2" });
+    let vali = await validate(token, newToken, req.headers["user-agent"] || "");
+    if (vali != null)
+      return res
+        .status(400)
+        .json({ error: "Not valid ontoken2", detail: vali });
     // 토큰
     var rested = await redis.token.register(token, ip, newToken);
     // 에러 나면 끝내기

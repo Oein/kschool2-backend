@@ -101,52 +101,44 @@ export default async function validate(old: string, newk: string, uag: string) {
     let newDecrypted = await aesGcmDecrypt(newk, enc);
 
     if (!oldDecrypted.startsWith("KSCHOOL")) {
-      console.log("OLD Not starts with kschool");
-      return false;
+      return "OLD Not match header";
     }
     if (!newDecrypted.startsWith("KSCHOOL")) {
-      console.log("New Not starts with kschool");
-      return false;
+      return "New Not match header";
     }
 
     oldDecrypted = oldDecrypted.replace("KSCHOOL", "");
     newDecrypted = newDecrypted.replace("KSCHOOL", "");
 
-    if (!isJsonString(oldDecrypted)) return false;
-    if (!isJsonString(newDecrypted)) return false;
+    if (!isJsonString(oldDecrypted)) return "OLD Is not valid";
+    if (!isJsonString(newDecrypted)) return "NEW Is not valid";
 
     let oldJ: JS = JSON.parse(oldDecrypted);
     let newJ: JS = JSON.parse(newDecrypted);
 
     if (oldJ.k != newJ.k) {
-      console.log("Key is not the same");
-      return false;
+      return "Key is not the same";
     }
     let nt = new Date(newJ.t).getTime();
     let ot = new Date(oldJ.t).getTime();
 
     if (nt - ot < 10000) {
-      console.log("Created before 10 seconds");
-      return false; // 10초 미만
+      return "Created before 10 seconds"; // 10초 미만
     }
     if (nt - ot > 1000 * 60 * 10) {
-      console.log("Created after 60 seconds");
-      return false; // 1분 이상
+      return "Created after 60 seconds"; // 1분 이상
     }
     if (newJ.a != oldJ.a) {
-      console.log("Agent is not the same");
-      return false;
+      return "ValidatorA is not the same";
     }
     if (newJ.a != uag) {
-      console.log("Agent is not the same as newA");
-      return false;
+      return "ValidatorA is not the same as newA";
     }
     if (uag != oldJ.a) {
-      console.log("Agent is not the same as oldA");
-      return false;
+      return "ValidatorA is not the same as oldA";
     }
 
-    return true;
+    return null;
   } catch (e) {
     throw e;
   }
