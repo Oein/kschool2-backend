@@ -119,13 +119,8 @@ export default async function validate(old: string, newk: string, uag: string) {
     if (oldJ.k != newJ.k) {
       return "Key is not the same";
     }
-    let nt = new Date(newJ.t).getTime();
-    let ot = new Date(oldJ.t).getTime();
 
-    if (nt - ot < 10000) {
-      return "Created before 10 seconds"; // 10초 미만
-    }
-    if (nt - ot > 1000 * 60 * 10) {
+    if (newJ.t - oldJ.t > 1000 * 60 * 10) {
       return "Created after 60 seconds"; // 1분 이상
     }
     if (newJ.a != oldJ.a) {
