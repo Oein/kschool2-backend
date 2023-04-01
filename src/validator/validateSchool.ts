@@ -1,5 +1,3 @@
-var KEY = process.env.NEIS_API_KEY || "";
-
 import redis from "../database/redis";
 import { getSchoolName } from "../util/getSchoolName";
 
